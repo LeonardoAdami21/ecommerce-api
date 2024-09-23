@@ -5,5 +5,22 @@
   "main": "server.js",
   "author": "Leonardo Adami",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "prisma": "^5.19.1",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "eslint": "8.52.0",
+    "nodemon": "^3.1.7",
+    "prettier": "3.1.0",
+    "prettier-eslint": "16.1.2"
+  }
 }
