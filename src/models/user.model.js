@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   googleId: { type: String },
   facebookId: { type: String },
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
-  userType: { type: String, enum: ["user", "admin"] },
+  userType: { type: String, enum: ["user", "admin"], default: "user" },
   cart: {
     items: [
       [
