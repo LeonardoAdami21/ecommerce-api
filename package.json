@@ -11,10 +11,13 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
-    "@prisma/client": "^5.19.1",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.0",
-    "prisma": "^5.19.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.3",
+    "passport": "^0.7.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
