@@ -1,0 +1,9 @@
+{
+  "name": "ecommerce-api",
+  "version": "1.0.0",
+  "description": "\"API de E-commerce com Pagamentos e Carrinho de Compras usando Node.js, Express.js, Swagger, Prisma e Stripe\"",
+  "main": "server.js",
+  "author": "Leonardo Adami",
+  "license": "MIT",
+  "private": false
+}
