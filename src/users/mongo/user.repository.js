@@ -1,7 +1,9 @@
 import User from "../../models/user.model.js";
 
 const findAll = async () => {
-    return await User.find();
+  return await User.find({
+    userType: "user",
+  });
 };
 
 const findById = async (id) => {
@@ -16,4 +18,4 @@ const deleted = async (id) => {
   return await User.findByIdAndDelete(id);
 };
 
-export const userRepository = {findAll, findById, update, deleted };
+export const userRepository = { findAll, findById, update, deleted };
