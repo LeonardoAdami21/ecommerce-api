@@ -1,6 +1,7 @@
 import { authService } from "./auth.service.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { jwtSecret } from "../env/envoriment.js";
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -37,9 +38,10 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
+   
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid password" });
+    if (isMatch) {
+      return res.status(400).json({ error: "Invalid password" });
     }
     const payload = {
       _id: user._id,

@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import { authRepository } from "./mongo/auth.repository.js";
 import { jwtSecret } from "../env/envoriment.js";
+import jwt from "jsonwebtoken";
+
 const create = async (data) => {
   try {
     const { name, email, password } = data;
@@ -41,9 +43,11 @@ const login = async (email, password) => {
     });
     return { access_token: token };
   } catch (error) {
-    throw new Error(error);
+    throw new Error({ error: error.message });
   }
 };
+
+
 
 const findByEmail = async (email) => {
   try {

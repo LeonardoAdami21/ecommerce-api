@@ -39,13 +39,16 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "John Doe"
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "QpZpY@example.com"
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "password123"
                   }
                 }
               }
@@ -98,10 +101,12 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "QpZpY@example.com"
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "password123"
                   }
                 }
               }
