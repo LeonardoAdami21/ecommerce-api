@@ -2,9 +2,23 @@ import { productService } from "./product.service.js";
 
 const create = async (req, res) => {
   try {
-    const { name, price, description, stock, imageUrl, category } = req.body;
-    if (!name || !price || !description || !stock || !imageUrl || !category) {
+    const { name, price, quantity, description, stock, imageUrl, category } =
+      req.body;
+    if (
+      !name ||
+      !price ||
+      !description ||
+      !stock ||
+      !imageUrl ||
+      !category ||
+      !quantity
+    ) {
       return res.status(400).json({ error: "All fields are required" });
+    }
+    if (quantity < 0) {
+      return res
+        .status(400)
+        .json({ error: "Quantity must be a positive number" });
     }
     if (stock < 0) {
       return res.status(400).json({ error: "Stock must be a positive number" });
@@ -15,7 +29,8 @@ const create = async (req, res) => {
     const product = await productService.create({
       name,
       price,
-      description,
+      description,  
+      quantity,
       stock,
       imageUrl,
       category,
