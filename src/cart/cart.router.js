@@ -16,4 +16,11 @@ cartRouter.post(
   cartController.addProductToCart,
 );
 
+cartRouter.delete(
+  "/:id",
+  jwtMiddleware.jwtMiddleware,
+  jwtMiddleware.userMiddleware,
+  cartController.deleted,
+);
+
 export default cartRouter;
