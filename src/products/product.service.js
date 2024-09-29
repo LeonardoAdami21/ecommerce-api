@@ -2,9 +2,21 @@ import { productRepository } from "./mongo/product.repository.js";
 
 const create = async (data) => {
   try {
-    const { name, price, description, stock, imageUrl, category } = data;
-    if (!name || !price || !description || !stock || !imageUrl || !category) {
+    const { name, price, quantity, description, stock, imageUrl, category } =
+      data;
+    if (
+      !name ||
+      !price ||
+      !description ||
+      !stock ||
+      !imageUrl ||
+      !category ||
+      !quantity
+    ) {
       throw new Error("All fields are required");
+    }
+    if (quantity < 0) {
+      throw new Error("Quantity must be a positive number");
     }
     if (stock < 0) {
       throw new Error("Stock must be a positive number");
@@ -15,6 +27,7 @@ const create = async (data) => {
     const product = await productRepository.create({
       name,
       price,
+      quantity,
       description,
       stock,
       imageUrl,
