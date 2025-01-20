@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "./src/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/.*",
+      "methods": ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
+      "dest": "main.js"
+    }
+  ]
+}

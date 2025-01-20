@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon src/main.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/main.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -16,7 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "stripe": "^17.5.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "vercel": "^39.3.0"
   },
   "devDependencies": {
     "eslint": "8.52.0",

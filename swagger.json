@@ -1,0 +1,45 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ecommerce API",
+    "description": "API for Ecommerce",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "User endpoints"
+    },
+    {
+      "name": "Product",
+      "description": "Product endpoints"
+    },
+    {
+      "name": "Order",
+      "description": "Order endpoints"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local server"
+    },
+    {
+      "url": "https://ecommerce-api-ten.vercel.app",
+      "description": "Live server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Welcome page",
+        "description": "Welcome page",
+        "responses": {
+          "200": {
+            "description": "Welcome page"
+          }
+        }
+      }
+    }
+  }
+}
