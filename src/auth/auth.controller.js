@@ -69,15 +69,6 @@ const register = async (req, res) => {
   }
 };
 
-const validateUser = async (email, password) => {
-  const user = User.findOne({ where: { email } });
-  if (user && (await argon2.verify(password, user.password))) {
-    delete user.password;
-    return user;
-  }
-  return null;
-};
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
