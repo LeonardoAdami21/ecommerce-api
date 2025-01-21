@@ -60,8 +60,6 @@ const register = async (req, res) => {
     setCookie(res, accessToken, refreshToken);
     return res.status(201).json({
       data: user,
-      access_token: accessToken,
-      refresh_token: refreshToken,
       message: "User registered successfully",
     });
   } catch (error) {
@@ -87,7 +85,11 @@ const login = async (req, res) => {
     storeRefreshToken(user._id, refreshToken);
     return res
       .status(200)
-      .json({ data: accessToken, message: "User login successfully" });
+      .json({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        message: "User login successfully",
+      });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
