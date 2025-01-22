@@ -33,7 +33,12 @@ const refreshToken = async (userId) => {
     const refreshToken = jwt.sign({ userId }, refreshTokenSecret, {
       expiresIn: "7d",
     });
-    await redisClient.set(`refresh_token:${userId}`, refreshToken, "EX", 7 * 24 * 60 * 60);
+    await redisClient.set(
+      `refresh_token:${userId}`,
+      refreshToken,
+      "EX",
+      7 * 24 * 60 * 60,
+    );
     return refreshToken;
   } catch (error) {
     throw new Error(error.message);
@@ -52,4 +57,16 @@ const findUserByEmail = async (email) => {
   }
 };
 
-export const AuthService = { register, refreshToken, findUserByEmail };
+const getUserProfile = async (userId) => {
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const AuthService = { register, refreshToken, findUserByEmail, getUserProfile };

@@ -83,13 +83,11 @@ const login = async (req, res) => {
     }
     const { accessToken, refreshToken } = generateToken(user._id);
     storeRefreshToken(user._id, refreshToken);
-    return res
-      .status(200)
-      .json({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        message: "User login successfully",
-      });
+    return res.status(200).json({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      message: "User login successfully",
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -139,4 +137,19 @@ const refreshToken = async (req, res) => {
   }
 };
 
-export const AuthController = { register, login, logout, refreshToken };
+const findUserProfile = async (req, res) => {
+  try {
+    const user = req.user;
+    return res.status(200).json({ data: user });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const AuthController = {
+  register,
+  login,
+  logout,
+  refreshToken,
+  findUserProfile,
+};
