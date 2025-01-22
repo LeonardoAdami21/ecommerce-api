@@ -17,3 +17,8 @@ export const nodeEnv = process.env.NODE_ENV;
 export const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 export const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY;
 export const cloudinaryApiKeySecret = process.env.CLOUDINARY_API_KEY_SECRET;
+
+export const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+export const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
+
+export const clientUrl = process.env.CLIENT_URL;
