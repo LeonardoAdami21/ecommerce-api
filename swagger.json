@@ -15,6 +15,10 @@
       "description": "Cart endpoints"
     },
     {
+      "name": "Cupons",
+      "description": "Cupons endpoints"
+    },
+    {
       "name": "Products",
       "description": "Products endpoints"
     },
@@ -503,6 +507,64 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/cupons": {
+      "get": {
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Cupons"],
+        "summary": "Get cupons",
+        "responses": {
+          "200": {
+            "description": "Get cupons successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"  
+          }
+        }
+      }
+    },
+    "/cupons/validate": {
+      "get": {
+
+        "tags": ["Cupons"],
+        "summary": "Validate cupon",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cupom",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validate cupon successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Cupom not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
