@@ -11,6 +11,10 @@
       "description": "User endpoints"
     },
     {
+      "name": "Cart",
+      "description": "Cart endpoints"
+    },
+    {
       "name": "Products",
       "description": "Products endpoints"
     },
@@ -359,6 +363,143 @@
         "responses": {
           "200": {
             "description": "Get products by category successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Cart"],
+        "summary": "Get cart",
+        "responses": {
+          "200": {
+            "description": "Get cart successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Cart"],
+        "summary": "Add product to cart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "number"
+                  }
+                },
+                "required": ["productId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add product to cart successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/cart/{id}": {
+      "put": {
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "number"
+                  }
+                },
+                "required": ["quantity"]
+              }
+            }
+          }
+        },
+        "tags": ["Cart"],
+        "summary": "Update cart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update cart successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Cart"],
+        "summary": "Remove product from cart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Remove product from cart successfully"
           },
           "401": {
             "description": "Unauthorized"
