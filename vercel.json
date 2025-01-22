@@ -7,11 +7,11 @@
     }
   ],
   "routes": [
-    { "handle": "filesystem" },
     {
-      "src": "/.*",
+      "src": "/(.*)",
       "methods": ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
-      "dest": "main.js"
+      "dest": "./src/main.js"
     }
   ]
+  
 }
