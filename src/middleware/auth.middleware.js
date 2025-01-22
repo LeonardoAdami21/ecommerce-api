@@ -29,6 +29,7 @@ const protectedRoutes = async (req, res, next) => {
   }
 };
 
+
 const adminRouter = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();

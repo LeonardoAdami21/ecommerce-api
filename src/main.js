@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import productRouter from "./products/product.router.js";
 import cartRouter from "./cart/cart.router.js";
 import cupomRouter from "./cupons/cupom.router.js";
+import paymentRouter from "./orders/payment.router.js";
 
 app.use(express.json());
 app.use(cookieParser());
@@ -19,6 +20,7 @@ app.use("/auth", authRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use("/cupons", cupomRouter);
+app.use('/payments', paymentRouter);
 
 app.use(
   "/api",
