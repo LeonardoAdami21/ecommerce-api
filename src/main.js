@@ -9,6 +9,7 @@ import authRouter from "./auth/auth.router.js";
 import cookieParser from "cookie-parser";
 import productRouter from "./products/product.router.js";
 import cartRouter from "./cart/cart.router.js";
+import cupomRouter from "./cupons/cupom.router.js";
 
 app.use(express.json());
 app.use(cookieParser());
@@ -17,6 +18,7 @@ app.use(cors());
 app.use("/auth", authRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
+app.use("/cupons", cupomRouter);
 
 app.use(
   "/api",
