@@ -165,6 +165,25 @@
         }
       }
     },
+    "/auth/profile": {
+      "get": {
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Auth"],
+        "summary": "Get user profile",
+        "responses": {
+          "200": {
+            "description": "Get user profile successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/products": {
       "get": {
         "security": [
