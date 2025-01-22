@@ -2,6 +2,7 @@ import { stripe } from "../config/stripe.config.js";
 import Cupom from "../cupons/model/cupom.model.js";
 import { clientUrl } from "../env/envoriment.js";
 import User from "../users/model/user.model.js";
+import Order from "./model/order.model.js";
 
 const createCheckoutSession = async (data, user) => {
   try {
