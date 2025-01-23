@@ -18,7 +18,12 @@ const register = async (data) => {
       name,
       role: role || "user",
     });
-    return user;
+    return {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -57,9 +62,9 @@ const findUserByEmail = async (email) => {
   }
 };
 
-const getUserProfile = async (userId) => {
+const getUserProfile = async (id) => {
   try {
-    const user = await User.findOne({ _id: userId });
+    const user = await User.finById({ _id: id });
     if (!user) {
       throw new Error("User not found");
     }
@@ -69,4 +74,9 @@ const getUserProfile = async (userId) => {
   }
 };
 
-export const AuthService = { register, refreshToken, findUserByEmail, getUserProfile };
+export const AuthService = {
+  register,
+  refreshToken,
+  findUserByEmail,
+  getUserProfile,
+};

@@ -139,7 +139,8 @@ const refreshToken = async (req, res) => {
 
 const findUserProfile = async (req, res) => {
   try {
-    const user = req.user;
+    const userId = req.user._id;
+    const user = await AuthService.getUserProfile(userId);
     return res.status(200).json({ data: user });
   } catch (error) {
     return res.status(500).json({ message: error.message });
