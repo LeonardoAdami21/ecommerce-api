@@ -7,7 +7,7 @@ export const databaseProviders = [
     provide: DATA_SOURCE,
     useFactory: async () => {
       const mongooseConnection = await mongoose.connect(mongoUri);
-      return mongooseConnection.connection.host;
+      return mongooseConnection;
     },
   },
 ];
