@@ -1,11 +1,30 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { UserModule } from '../users/user.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { JwtStrategy } from '../strategy/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  imports: [],
-  providers: [],
-  exports: [AuthService],
+  imports: [
+    forwardRef(() => UserModule),
+    JwtModule.register({
+      secret: process.env.ACCESS_TOKEN_SECRET,
+      signOptions: { expiresIn: '15m' },
+    }),
+  ],
+  providers: [
+    AuthService,
+    JwtService,
+    JwtStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
+  exports: [AuthService, JwtService, JwtStrategy],
 })
 export class AuthModule {}
