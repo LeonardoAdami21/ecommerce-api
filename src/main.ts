@@ -12,7 +12,6 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  app.setGlobalPrefix('api');
   app.use(cookieParser());
 
   app.enableCors({

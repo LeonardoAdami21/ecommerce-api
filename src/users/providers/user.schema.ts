@@ -16,6 +16,12 @@ export class User {
 
   @Prop({ required: true, default: 'user', enum: ['user', 'admin'] })
   role: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ required: false })
+  refreshToken?: string;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);
