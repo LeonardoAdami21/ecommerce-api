@@ -49,9 +49,21 @@ export class UserService {
     }
   }
 
+  async findUserById(id: string) {
+    try {
+      const user = await this.userModel.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async findUserIsActivated(id: string) {
     try {
-      const user = await this.userModel.findById({ _id: id, isActive: true });
+      const user = await this.userModel.findById(id , { isActive: true });
       if (!user) {
         return false;
       }
