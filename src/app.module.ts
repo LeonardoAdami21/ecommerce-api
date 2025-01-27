@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { RolesGuard } from './jwt/roles.guard';
+import { ProductsModule } from './products/products.module';
+import { MulterConfigModule } from './multer/multer-config.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { RolesGuard } from './jwt/roles.guard';
     }),
     UserModule,
     AuthModule,
+    ProductsModule,
+    MulterConfigModule,
   ],
   controllers: [],
   providers: [
@@ -28,7 +32,7 @@ import { RolesGuard } from './jwt/roles.guard';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
-    }
+    },
   ],
   exports: [...databaseProviders],
 })
