@@ -49,9 +49,9 @@ export class UserService {
     }
   }
 
-  async findUserById(id: string) {
+  async findUserById(userId: string) {
     try {
-      const user = await this.userModel.findById(id);
+      const user = await this.userModel.findById(userId);
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -68,6 +68,18 @@ export class UserService {
         return false;
       }
       return user.isActive;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async finAlldCarts(userId: string) {
+    try {
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user.cartItems;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
