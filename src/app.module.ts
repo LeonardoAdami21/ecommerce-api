@@ -11,6 +11,7 @@ import { RolesGuard } from './jwt/roles.guard';
 import { ProductsModule } from './products/products.module';
 import { MulterConfigModule } from './multer/multer-config.module';
 import { CartModule } from './cart/cart.module';
+import { CouponModule } from './coupon/coupon.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CartModule } from './cart/cart.module';
     ProductsModule,
     MulterConfigModule,
     CartModule,
+    CouponModule,
   ],
   controllers: [],
   providers: [
