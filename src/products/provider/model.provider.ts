@@ -1,0 +1,1 @@
+export const PRODUCT_MODEL = 'PRODUCT_MODEL';

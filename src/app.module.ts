@@ -7,6 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
+import { RolesGuard } from './jwt/roles.guard';
+import { ProductsModule } from './products/products.module';
+import { MulterConfigModule } from './multer/multer-config.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -15,6 +19,9 @@ import { JwtAuthGuard } from './jwt/jwt-auth.guard';
     }),
     UserModule,
     AuthModule,
+    ProductsModule,
+    MulterConfigModule,
+    CartModule,
   ],
   controllers: [],
   providers: [
@@ -23,6 +30,10 @@ import { JwtAuthGuard } from './jwt/jwt-auth.guard';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
   exports: [...databaseProviders],

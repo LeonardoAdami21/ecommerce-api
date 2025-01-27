@@ -1,7 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, HydratedDocument } from 'mongoose';
+import mongoose, { Document, HydratedDocument, Types } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User> & Document;
+
+export class CartItem {
+  @Prop({ type: Number, default: 1 })
+  quantity: number;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+  product: Types.ObjectId;
+}
 
 @Schema({ timestamps: true })
 export class User {
@@ -14,7 +22,7 @@ export class User {
   @Prop({ required: true, minlength: 6 })
   password: string;
 
-  @Prop({ required: true, default: 'user', enum: ['user', 'admin'] })
+  @Prop({ default: 'user', enum: ['user', 'admin'] })
   role: string;
 
   @Prop({ default: true })
@@ -22,6 +30,20 @@ export class User {
 
   @Prop({ required: false })
   refreshToken?: string;
+
+  @Prop({
+    type: [
+      {
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+      },
+    ],
+    default: [],
+  })
+  cartItems?: CartItem[];
 }
 
 export const userSchema = SchemaFactory.createForClass(User);
