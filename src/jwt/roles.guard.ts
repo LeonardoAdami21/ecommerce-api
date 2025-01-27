@@ -8,6 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { UserRole } from '../interfaces/user.role';
+import { JwtPayloadInterface } from '../interfaces/jwt.payload';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -31,9 +32,7 @@ export class RolesGuard implements CanActivate {
 
     const payload = this.jwtService.decode(token) as any;
 
-    const roles = payload.profile
-      ? payload.profile
-      : payload.student.user.profile;
+    const roles = payload.role ? payload.role : payload.user.role;
 
     if (roles.includes(UserRole.ADMIN)) return true;
 

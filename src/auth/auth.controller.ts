@@ -1,27 +1,36 @@
 import {
   Body,
   Controller,
+  HttpCode,
   HttpStatus,
   Post,
+  Req,
   Request,
   Response,
+  UseGuards
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import redisClient from '../config/redis.config';
+import { accessTokenSecret, refreshTokenSecret } from '../env/envoriment';
+import { IsPublic } from '../interfaces/isPublicKey';
+import { RequestUser } from '../interfaces/request.user';
+import { UserRole } from '../interfaces/user.role';
+import { UserAuthGuard } from '../jwt/user-auth.guard';
+import { Roles } from '../strategy/roles.decorator';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import redisClient from 'src/config/redis.config';
-import { JwtService } from '@nestjs/jwt';
-import { accessTokenSecret, refreshTokenSecret } from '../env/envoriment';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { IsPublic } from '../interfaces/isPublicKey';
 
 @Controller('auth')
 @ApiTags('Authentication and Authorization')
@@ -32,7 +41,7 @@ export class AuthController {
   ) {}
 
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiOkResponse({ description: 'User registered successfully' })
+  @ApiCreatedResponse({ description: 'User registered successfully' })
   @ApiConflictResponse({ description: 'Email already exists' })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
@@ -96,21 +105,41 @@ export class AuthController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Post('login')
   @ApiBody({ type: LoginAuthDto })
-  async login(@Body() dto: LoginAuthDto, @Response() res: any) {
-    const user = await this.authService.findUserByEmail(dto.email);
-    const { accessToken, refreshToken } = await this.generateTokens(user._id);
-    await this.storeRefreshToken(user._id, refreshToken);
-    this.setCookies(res, accessToken, refreshToken);
-    return res.status(HttpStatus.OK).json({
-      message: 'Login successfully',
-      acess_token: accessToken,
-      refresh_token: refreshToken,
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+  async login(@Body() dto: LoginAuthDto) {
+    return await this.authService.login(dto);
+  }
+
+  @IsPublic()
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Logout ' })
+  @ApiOkResponse({ description: 'Logout successfully' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @Post('logout')
+  async logout(@Request() req: any, @Response() res: any) {
+    return await this.authService.logout(req, res);
+  }
+
+  @IsPublic()
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Refresh token' })
+  @ApiOkResponse({ description: 'Refresh token successfully' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @Post('refresh-token')
+  async refreshToken(@Request() req: any, @Response() res: any) {
+    return await this.authService.refreshToken(req, res);
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiOkResponse({ description: 'Get user profile successfully' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @Post('profile')
+  async profile(@Req() req: {user: {id: string}}) {
+    return await this.authService.usersProfile(req.user.id);
   }
 }
