@@ -1,28 +1,40 @@
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { PRODUCT_MODEL } from './provider/model.provider';
 import { Model } from 'mongoose';
-import { Product } from './model/product.model';
 import cloudinary from '../config/cloudinary.config';
 import redisClient from '../config/redis.config';
-import { Express } from 'express';
+import { CreateProductDto } from './dto/create-product.dto';
+import { Product } from './model/product.model';
+import { PRODUCT_MODEL } from './provider/model.provider';
+import { UserService } from '../users/user.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @Inject(PRODUCT_MODEL) private readonly productModel: Model<Product>,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
   ) {}
 
   async findAll() {
     try {
       const products = await this.productModel.find();
+      return products;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async findProdByUserId(userId: string) {
+    try {
+      const user = await this.userService.findUserById(userId );
+      const products = await this.productModel.find({ _id: { $in: user.cartItems } });
       return products;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -125,6 +137,18 @@ export class ProductsService {
           ? cloudinaryResponse.secure_url
           : '',
       });
+      return product;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async findById(productId: string) {
+    try {
+      const product = await this.productModel.findById({ _id: productId });
+      if (!product) {
+        throw new NotFoundException('Product not found');
+      }
       return product;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
