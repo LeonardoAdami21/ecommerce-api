@@ -185,4 +185,47 @@ export class PaymentsService {
 
     return newCoupon;
   }
+
+  async totalSalesData() {
+    try {
+      const total = await this.paymentModel.countDocuments([
+        {
+          $group: {
+            _id: null,
+            totalSales: { $sum: 1 },
+            totalRevenue: { $sum: '$totalAmount' },
+          },
+        },
+      ]);
+      return total;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getSalesData(startDate: Date, endDate: Date) {
+    try {
+      const data = await this.paymentModel.aggregate([
+        {
+				$match: {
+					createdAt: {
+						$gte: startDate,
+						$lte: endDate,
+					},
+				},
+			},
+			{
+				$group: {
+					_id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+					sales: { $sum: 1 },
+					revenue: { $sum: "$totalAmount" },
+				},
+			},
+			{ $sort: { _id: 1 } },
+      ]);
+      return data[0];
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
