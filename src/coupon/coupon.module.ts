@@ -9,5 +9,6 @@ import { UserModule } from '../users/user.module';
   imports: [DatabaseModule, forwardRef(() => UserModule)],
   controllers: [CouponController],
   providers: [CouponService, ...couponProviders],
+  exports: [CouponService],
 })
 export class CouponModule {}
