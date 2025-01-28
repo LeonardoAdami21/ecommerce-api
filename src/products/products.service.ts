@@ -178,4 +178,13 @@ export class ProductsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async totalProducts() {
+    try {
+      const total = await this.productModel.countDocuments();
+      return total;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }

@@ -13,6 +13,7 @@ import { MulterConfigModule } from './multer/multer-config.module';
 import { CartModule } from './cart/cart.module';
 import { CouponModule } from './coupon/coupon.module';
 import { PaymentsModule } from './payments/payments.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PaymentsModule } from './payments/payments.module';
     CartModule,
     CouponModule,
     PaymentsModule,
+    AnalyticsModule,
   ],
   controllers: [],
   providers: [

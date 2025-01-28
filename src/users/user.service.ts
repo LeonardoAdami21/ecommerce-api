@@ -84,4 +84,13 @@ export class UserService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async totalUsers(){
+    try {
+      const total = await this.userModel.countDocuments();
+      return total;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
