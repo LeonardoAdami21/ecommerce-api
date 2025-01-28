@@ -14,5 +14,6 @@ import { CouponModule } from '../coupon/coupon.module';
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService, ...paymentProviders],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}
