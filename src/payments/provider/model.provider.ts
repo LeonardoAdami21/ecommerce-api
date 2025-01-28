@@ -1,0 +1,1 @@
+export const PAYMENT_MODEL = 'PAYMENT_MODEL';
