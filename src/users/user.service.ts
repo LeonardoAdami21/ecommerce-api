@@ -37,9 +37,21 @@ export class UserService {
     }
   }
 
+  async findUserByEmail(email: string) {
+    try {
+      const user = await this.userModel.findOne({ email: email });
+      if (user) {
+        throw new ConflictException('User already exists');
+      }
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async fidOneByEmail(email: string) {
     try {
-      const user = await this.userModel.findOne({ email });
+      const user = await this.userModel.findOne({ email: email });
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -63,7 +75,7 @@ export class UserService {
 
   async findUserIsActivated(id: string) {
     try {
-      const user = await this.userModel.findById(id , { isActive: true });
+      const user = await this.userModel.findById(id, { isActive: true });
       if (!user) {
         return false;
       }
@@ -85,7 +97,7 @@ export class UserService {
     }
   }
 
-  async totalUsers(){
+  async totalUsers() {
     try {
       const total = await this.userModel.countDocuments();
       return total;
