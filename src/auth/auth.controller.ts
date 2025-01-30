@@ -3,10 +3,14 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
   Post,
   Req,
   Request,
   Response,
+  UseGuards,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -19,6 +23,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import redisClient from '../config/redis.config';
 import {
@@ -32,6 +37,10 @@ import { Roles } from '../strategy/roles.decorator';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { UserAuthGuard } from 'src/jwt/user-auth.guard';
+import { RolesGuard } from 'src/jwt/roles.guard';
+import { RequestUser } from 'src/interfaces/request.user';
 
 @Controller('auth')
 @ApiTags('Authentication and Authorization')
@@ -52,10 +61,13 @@ export class AuthController {
     return this.authService.register(dto, res);
   }
 
-  async generateTokens(userId) {
+  async generateTokens(userId, name, email, role) {
     const accessToken = this.jwtService.sign(
       {
         userId,
+        name,
+        email,
+        role,
       },
       {
         secret: accessTokenSecret,
@@ -64,7 +76,7 @@ export class AuthController {
     );
 
     const refreshToken = this.jwtService.sign(
-      { userId },
+      { userId, name, email, role },
       {
         secret: refreshTokenSecret,
         expiresIn: '7d',
@@ -163,14 +175,14 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @Roles(UserRole.USER, UserRole.ADMIN)
   @HttpCode(200)
   @ApiOperation({ summary: 'Get user profile' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'Get user profile successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Get('profile')
-  async profile(@Req() req: { user: { id: string } }) {
+  profile(@Request() req: RequestUser) {
     return req.user;
   }
 }

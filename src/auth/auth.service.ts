@@ -28,10 +28,19 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  generateTokens(userId) {
+  generateTokens(userId, name, email, role) {
+    const user = {
+      id: userId,
+      name: name,
+      email: email,
+      role: role,
+    };
     const accessToken = this.jwtService.sign(
       {
-        userId,
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       },
       {
         secret: accessTokenSecret,
@@ -40,7 +49,7 @@ export class AuthService {
     );
 
     const refreshToken = this.jwtService.sign(
-      { userId },
+      { userId: user.id, name: user.name, email: user.email, role: user.role },
       {
         secret: refreshTokenSecret,
         expiresIn: '7d',
@@ -99,14 +108,24 @@ export class AuthService {
         password,
       });
 
-      const { accessToken, refreshToken } = this.generateTokens(user._id);
+      const { accessToken, refreshToken } = this.generateTokens(
+        user._id,
+        user.name,
+        user.email,
+        user.role,
+      );
 
-      await this.storeRefreshToken(user._id, refreshToken);
+      await this.storeRefreshToken(user.id, refreshToken);
       this.setCookies(res, accessToken, refreshToken);
 
       return res.status(201).json({
         message: 'Register successfully',
-        data: user,
+        data: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -130,7 +149,12 @@ export class AuthService {
         throw new BadRequestException('Invalid password');
       }
 
-      const { accessToken, refreshToken } = this.generateTokens(user._id);
+      const { accessToken, refreshToken } = this.generateTokens(
+        user._id,
+        user.name,
+        user.email,
+        user.role,
+      );
       await this.storeRefreshToken(user._id, refreshToken);
       this.setCookies(res, accessToken, refreshToken);
       return res.status(200).json({
@@ -138,7 +162,7 @@ export class AuthService {
         access_token: accessToken,
         refresh_token: refreshToken,
         data: {
-          id: user.id,
+          id: user._id,
           name: user.name,
           email: user.email,
           role: user.role,
