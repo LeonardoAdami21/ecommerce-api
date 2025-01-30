@@ -10,8 +10,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import redisClient from '../config/redis.config';
-import { accessTokenSecret, refreshTokenSecret } from '../env/envoriment';
-import { User } from '../users/providers/user.schema';
+import {
+  accessTokenSecret,
+  nodeEnv,
+  refreshTokenSecret,
+} from '../env/envoriment';
 import { UserService } from '../users/user.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
@@ -25,10 +28,19 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  generateTokens(userId) {
+  generateTokens(userId, name, email, role) {
+    const user = {
+      id: userId,
+      name: name,
+      email: email,
+      role: role,
+    };
     const accessToken = this.jwtService.sign(
       {
-        userId,
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       },
       {
         secret: accessTokenSecret,
@@ -37,7 +49,7 @@ export class AuthService {
     );
 
     const refreshToken = this.jwtService.sign(
-      { userId },
+      { userId: user.id, name: user.name, email: user.email, role: user.role },
       {
         secret: refreshTokenSecret,
         expiresIn: '7d',
@@ -59,13 +71,13 @@ export class AuthService {
   setCookies(res: any, accessToken, refreshToken) {
     res.cookie('accessToken', accessToken, {
       httpOnly: true, // prevent XSS attacks, cross site scripting attack
-      secure: process.env.NODE_ENV === 'production',
+      secure: nodeEnv === 'production',
       sameSite: 'strict', // prevents CSRF attack, cross-site request forgery attack
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true, // prevent XSS attacks, cross site scripting attack
-      secure: process.env.NODE_ENV === 'production',
+      secure: nodeEnv === 'production',
       sameSite: 'strict', // prevents CSRF attack, cross-site request forgery attack
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -83,33 +95,44 @@ export class AuthService {
     return user;
   }
 
-  async register(dto: RegisterAuthDto) {
+  async register(dto: RegisterAuthDto, res: any) {
     try {
       const { email, password, name } = dto;
+      const userExists = await this.userService.findUserByEmail(email);
+      if (userExists) {
+        throw new ConflictException('Email already exists');
+      }
       const user = await this.userService.create({
         name,
         email,
         password,
       });
-      return user;
+
+      const { accessToken, refreshToken } = this.generateTokens(
+        user._id,
+        user.name,
+        user.email,
+        user.role,
+      );
+
+      await this.storeRefreshToken(user.id, refreshToken);
+      this.setCookies(res, accessToken, refreshToken);
+
+      return res.status(201).json({
+        message: 'Register successfully',
+        data: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
 
-  async findUserByEmail(email: string) {
-    try {
-      const user = await this.userService.fidOneByEmail(email);
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      return user;
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-
-  async login(dto: LoginAuthDto) {
+  async login(dto: LoginAuthDto, res: any) {
     try {
       const { email, password } = dto;
       const user = await this.userService.fidOneByEmail(email);
@@ -125,42 +148,34 @@ export class AuthService {
       if (!isvalidPassword) {
         throw new BadRequestException('Invalid password');
       }
-      
-      const payload: JwtPayloadInterface = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
 
-      }
-
-      const refreshToken = this.jwtService.sign(payload, {
-        secret: refreshTokenSecret,
-        expiresIn: '7d',
-      })
-
-      const accessToken = this.jwtService.sign(payload, {
-        secret: accessTokenSecret,
-        expiresIn: '15m',
-      })
-
-      await this.storeRefreshToken(user.id, refreshToken);
-      return{
+      const { accessToken, refreshToken } = this.generateTokens(
+        user._id,
+        user.name,
+        user.email,
+        user.role,
+      );
+      await this.storeRefreshToken(user._id, refreshToken);
+      this.setCookies(res, accessToken, refreshToken);
+      return res.status(200).json({
         message: 'Login successfully',
         access_token: accessToken,
         refresh_token: refreshToken,
-        data: user
-      }
-
+        data: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
-
   async logout(req: any, res: any) {
     try {
       const refreshToken = req.cookies.refreshToken;
-      if (!refreshToken) {
+      if (refreshToken) {
         const decoded = this.jwtService.verify(refreshToken, {
           secret: refreshTokenSecret,
         });
@@ -168,49 +183,9 @@ export class AuthService {
       }
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
-      return {
+      return res.status(200).json({
         message: 'Logout successfully',
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-
-  async refreshToken(req: any, res: any) {
-    try {
-      const refreshToken = req.cookies.refreshToken;
-
-      if (!refreshToken) {
-        return res.status(401).json({ message: 'No refresh token provided' });
-      }
-
-      const decoded = this.jwtService.verify(refreshToken, {
-        secret: refreshTokenSecret,
       });
-      const storedToken = await redisClient.get(
-        `refresh_token:${decoded.userId}`,
-      );
-
-      if (storedToken !== refreshToken) {
-        return res.status(401).json({ message: 'Invalid refresh token' });
-      }
-
-      const accessToken = this.jwtService.sign(
-        { userId: decoded.userId },
-        { secret: accessTokenSecret, expiresIn: '15m' },
-      );
-
-      res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 15 * 60 * 1000,
-      });
-      return {
-        message: 'Refresh token successfully',
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

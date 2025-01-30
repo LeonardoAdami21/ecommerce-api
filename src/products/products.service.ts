@@ -33,8 +33,10 @@ export class ProductsService {
 
   async findProdByUserId(userId: string) {
     try {
-      const user = await this.userService.findUserById(userId );
-      const products = await this.productModel.find({ _id: { $in: user.cartItems } });
+      const user = await this.userService.findUserById(userId);
+      const products = await this.productModel.find({
+        _id: { $in: user.cartItems },
+      });
       return products;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -119,9 +121,10 @@ export class ProductsService {
   async create(dto: CreateProductDto, file: Express.Multer.File) {
     try {
       const { name, description, price, category } = dto;
-      if (!name || !description || !price || !category || !file) {
+      if (!name || !description || !price || !category) {
         throw new BadRequestException('All fields are required');
       }
+    
       let cloudinaryResponse: any = null;
       if (file) {
         cloudinaryResponse = await cloudinary.uploader.upload(file.path, {
