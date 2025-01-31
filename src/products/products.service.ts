@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -124,7 +125,16 @@ export class ProductsService {
       if (!name || !description || !price || !category) {
         throw new BadRequestException('All fields are required');
       }
-    
+
+      const priceNumber = Number(price);
+      if (isNaN(priceNumber) || priceNumber <= 0) {
+        throw new ConflictException('Price must be a valid number');
+      }
+
+      if (!file) {
+        throw new BadRequestException('File is required');
+      }
+
       let cloudinaryResponse: any = null;
       if (file) {
         cloudinaryResponse = await cloudinary.uploader.upload(file.path, {
@@ -158,7 +168,7 @@ export class ProductsService {
     }
   }
 
-  async delete(id: string) {
+  async deleteProduct(id: string) {
     try {
       const product = await this.productModel.findById(id);
       if (!product) {
