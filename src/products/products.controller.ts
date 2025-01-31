@@ -109,7 +109,7 @@ export class ProductsController {
   }
 
   @ApiBearerAuth()
-  @Roles(UserRole.USER,UserRole.ADMIN)
+  @Roles(UserRole.USER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Find recommended products' })
   @ApiOkResponse({ description: 'Recommended products found successfully' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
@@ -137,6 +137,6 @@ export class ProductsController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productsService.delete(id);
+    return this.productsService.deleteProduct(id);
   }
 }
