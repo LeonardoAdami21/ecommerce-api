@@ -25,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { Roles } from '../strategy/roles.decorator';
 import { UserRole } from '../interfaces/user.role';
+import { RequestUser } from '../interfaces/request.user';
 
 @Controller('cart')
 @ApiBearerAuth()
@@ -41,11 +42,8 @@ export class CartController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post()
-  create(
-    @Body() createCartDto: CreateCartDto,
-    @Request() req: { user: { id: string } },
-  ) {
-    return this.cartService.create(createCartDto, req.user.id);
+  create(@Body() createCartDto: CreateCartDto, @Request() req: { user: { _id: string } }) {
+    return this.cartService.create(createCartDto, req.user._id);
   }
 
   @Roles(UserRole.USER)
@@ -56,8 +54,8 @@ export class CartController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Get()
-  findAll(@Request() req: { user: { id: string } }) {
-    return this.cartService.findAll(req.user.id);
+  findAll(@Request() req: { user: { _id: string } }) {
+    return this.cartService.findAll(req.user._id);
   }
 
   @Roles(UserRole.USER)
@@ -70,9 +68,9 @@ export class CartController {
   update(
     @Param('productId') productId: string,
     @Body() updateCartDto: UpdateCartDto,
-    @Request() req: { user: { id: string } },
+    @Request() req: { user: { _id: string } },
   ) {
-    return this.cartService.update(req.user.id, updateCartDto, productId);
+    return this.cartService.update(req.user._id, updateCartDto, productId);
   }
 
   @Roles(UserRole.USER)
@@ -82,7 +80,7 @@ export class CartController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @Delete('')
-  remove(@Body() dto: CreateCartDto, @Request() req: { user: { id: string } }) {
-    return this.cartService.removeAllProductsFromCart(dto, req.user.id);
+  remove(@Body() dto: CreateCartDto, @Request() req: { user: { _id: string } }) {
+    return this.cartService.removeAllProductsFromCart(dto, req.user._id);
   }
 }

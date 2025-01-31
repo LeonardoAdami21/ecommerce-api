@@ -3,14 +3,10 @@ import {
   Controller,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
-  NotFoundException,
   Post,
-  Req,
   Request,
   Response,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -32,15 +28,10 @@ import {
   refreshTokenSecret,
 } from '../env/envoriment';
 import { IsPublic } from '../interfaces/isPublicKey';
-import { UserRole } from '../interfaces/user.role';
-import { Roles } from '../strategy/roles.decorator';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
-import { UserAuthGuard } from 'src/jwt/user-auth.guard';
-import { RolesGuard } from 'src/jwt/roles.guard';
-import { RequestUser } from 'src/interfaces/request.user';
 
 @Controller('auth')
 @ApiTags('Authentication and Authorization')
@@ -52,62 +43,13 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Register a new user' })
   @ApiCreatedResponse({ description: 'User registered successfully' })
-  @ApiConflictResponse({ description: 'Email already exists' })
+  @ ApiConflictResponse({ description: 'Email already exists' })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @IsPublic()
   @Post('register')
   register(@Body() dto: RegisterAuthDto, @Response() res: any) {
     return this.authService.register(dto, res);
-  }
-
-  async generateTokens(userId, name, email, role) {
-    const accessToken = this.jwtService.sign(
-      {
-        userId,
-        name,
-        email,
-        role,
-      },
-      {
-        secret: accessTokenSecret,
-        expiresIn: '15m',
-      },
-    );
-
-    const refreshToken = this.jwtService.sign(
-      { userId, name, email, role },
-      {
-        secret: refreshTokenSecret,
-        expiresIn: '7d',
-      },
-    );
-
-    return { accessToken, refreshToken };
-  }
-
-  storeRefreshToken = async (userId, refreshToken) => {
-    await redisClient.set(
-      `refresh_token:${userId}`,
-      refreshToken,
-      'EX',
-      7 * 24 * 60 * 60,
-    ); // 7days
-  };
-
-  async setCookies(res: any, accessToken, refreshToken) {
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true, // prevent XSS attacks, cross site scripting attack
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict', // prevents CSRF attack, cross-site request forgery attack
-      maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true, // prevent XSS attacks, cross site scripting attack
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict', // prevents CSRF attack, cross-site request forgery attack
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
   }
 
   @IsPublic()
@@ -176,13 +118,19 @@ export class AuthController {
 
   @ApiBearerAuth()
   @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get user profile' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiOkResponse({ description: 'Get user profile successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Get('profile')
-  profile(@Request() req: RequestUser) {
-    return req.user;
+  profile(@Request() req: any) {
+    return {
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+    }
   }
 }
