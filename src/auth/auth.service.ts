@@ -29,19 +29,9 @@ export class AuthService {
   ) {}
 
   generateTokens(userId, name, email, role) {
-    const user = {
-      id: userId,
-      name: name,
-      email: email,
-      role: role,
-    };
+    const payload: JwtPayloadInterface = { _id: userId, name, email, role };
     const accessToken = this.jwtService.sign(
-      {
-        userId: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      payload,
       {
         secret: accessTokenSecret,
         expiresIn: '15m',
@@ -49,7 +39,7 @@ export class AuthService {
     );
 
     const refreshToken = this.jwtService.sign(
-      { userId: user.id, name: user.name, email: user.email, role: user.role },
+      payload,
       {
         secret: refreshTokenSecret,
         expiresIn: '7d',
@@ -115,13 +105,13 @@ export class AuthService {
         user.role,
       );
 
-      await this.storeRefreshToken(user.id, refreshToken);
+      await this.storeRefreshToken(user._id, refreshToken);
       this.setCookies(res, accessToken, refreshToken);
 
       return res.status(201).json({
         message: 'Register successfully',
         data: {
-          id: user._id,
+          _id: user._id,
           name: user.name,
           email: user.email,
           role: user.role,
@@ -162,7 +152,7 @@ export class AuthService {
         access_token: accessToken,
         refresh_token: refreshToken,
         data: {
-          id: user._id,
+          _id: user._id,
           name: user.name,
           email: user.email,
           role: user.role,

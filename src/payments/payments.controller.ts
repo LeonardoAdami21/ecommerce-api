@@ -32,11 +32,11 @@ export class PaymentsController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   create(
     @Body() createPaymentDto: CreatePaymentDto,
-    @Request() req: { user: { id: string } },
+    @Request() req: { user: { _id: string } },
   ) {
     return this.paymentsService.createCheckoutSession(
       createPaymentDto,
-      req.user.id,
+      req.user._id,
     );
   }
 
@@ -49,11 +49,11 @@ export class PaymentsController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   checkoutSuccess(
     @Body() createPaymentDto: CreatePaymentDto,
-    @Request() req: { user: { id: string } },
+    @Request() req: { user: { _id: string } },
   ) {
     return this.paymentsService.createCheckoutSession(
       createPaymentDto,
-      req.user.id,
+      req.user._id,
     );
   }
 }
