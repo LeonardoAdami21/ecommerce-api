@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -10,22 +11,29 @@ import { PrismaClient } from '@prisma/client';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { PRODUCT__REPOSITORY } from '../provider/product.provider';
+import { UsersService } from '../../users/users.service';
 
 @Injectable()
 export class ProductRepository {
   constructor(
     @Inject(PRODUCT__REPOSITORY)
     private readonly productRepository: PrismaClient['product'],
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, userId: number) {
     try {
+      const user = await this.usersService.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
       const { name, category, description, price, quantity_stock } =
         createProductDto;
       if (!name || !category || !description || !price || !quantity_stock) {
         throw new BadRequestException('All fields are required');
       }
-      return await this.productRepository.create({
+      const product = await this.productRepository.create({
         data: {
           name,
           category,
@@ -34,6 +42,7 @@ export class ProductRepository {
           quantity_stock,
         },
       });
+      return product;
     } catch (error) {
       throw new InternalServerErrorException('Error creating product', error);
     }
