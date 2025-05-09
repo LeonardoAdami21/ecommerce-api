@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -27,21 +28,25 @@ import { ProductsService } from './products.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Request } from 'express';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 @ApiTags('Products')
 @Controller('v2/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(['admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiCreatedResponse({ description: 'Product created successfully.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  create(@Body() createProductDto: CreateProductDto, @Req() req: Request) {
+    return this.productsService.create(createProductDto, req.user.id);
   }
 
   @Get()
@@ -90,6 +95,7 @@ export class ProductsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @Roles(['admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a product' })
   @ApiOkResponse({ description: 'Product updated successfully.' })
@@ -105,6 +111,7 @@ export class ProductsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @Roles(['admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a product' })
   @ApiOkResponse({ description: 'Product deleted successfully.' })

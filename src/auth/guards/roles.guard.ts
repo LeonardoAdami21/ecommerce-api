@@ -1,3 +1,4 @@
+// roles.guard.ts - Versão alternativa sem depender de JwtService injetado
 import {
   CanActivate,
   ExecutionContext,
@@ -7,12 +8,10 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../../decorators/public.decorator';
-import { JwtService } from '@nestjs/jwt';
-import { jwtSecret } from '../../env/envoriment';
+import * as jwt from 'jsonwebtoken'; // Usar jsonwebtoken diretamente
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  private readonly jwtService: JwtService;
   constructor(private readonly reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -48,10 +47,8 @@ export class RolesGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
 
     try {
-      // Decodifica o token
-      const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
-      });
+      // Decodifica o token usando jsonwebtoken diretamente
+      const payload: any = jwt.verify(token, process.env.JWT_SECRET);
 
       // Adiciona o usuário ao request para uso futuro
       request.user = payload;
@@ -65,7 +62,7 @@ export class RolesGuard implements CanActivate {
       }
 
       // Verifica se o usuário tem permissão para acessar a rota
-      return requiredRoles.includes(userRole as string); // eslint-disable-line
+      return requiredRoles.includes(userRole as string);
     } catch (error) {
       throw new UnauthorizedException('Token inválido');
     }

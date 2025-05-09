@@ -1,10 +1,10 @@
 export interface IPayload {
   name?: string;
   email: string;
-  sub: string;
+  sub?: number;
   roles: string[];
   password?: string;
-  id?: string;
+  id?: number;
   iat?: number;
   exp?: number;
 }
