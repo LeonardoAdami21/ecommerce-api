@@ -61,7 +61,7 @@ export class AuthService {
         throw new BadRequestException('Invalid credentials');
       }
       const userRoles = user.role;
-      if (userRoles !== 'USER' && userRoles !== 'ADMIN') {
+      if (userRoles !== 'user' && userRoles !== 'admin') {
         throw new ConflictException('Invalid user role');
       }
       const payload: IPayload = {
