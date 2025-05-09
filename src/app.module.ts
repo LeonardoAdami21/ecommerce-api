@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
   ],
 })
 export class AppModule implements NestModule {
