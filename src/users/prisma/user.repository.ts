@@ -106,6 +106,7 @@ export class UserRepository {
     try {
       const user = await this.userRepository.findUnique({
         where: { id: userId },
+        
       });
       if (!user) {
         throw new NotFoundException('User not found');
