@@ -49,13 +49,16 @@ export class UsersService {
     }
   }
 
-  async me(userId: number) {
+  async me(id: number) {
     try {
-      const user = await this.userRepository.me(userId);
+      const user = await this.userRepository.me(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
       return user;
     } catch (error) {
       throw new InternalServerErrorException(
-        'An error occurred while retrieving the user',
+        'An error occurred while retrieving the user', error
       );
     }
   }

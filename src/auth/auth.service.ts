@@ -66,6 +66,7 @@ export class AuthService {
       }
       const payload: IPayload = {
         email: user.email,
+        name: user.name,
         id: user.id,
         roles: user.role,
       };
@@ -77,6 +78,12 @@ export class AuthService {
       return {
         message: 'User login successfully',
         access_token: token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       };
     } catch (error) {
       throw new InternalServerErrorException(
