@@ -6,11 +6,21 @@ import { PrismaConfigService } from '../config/prisma.config.service';
 import { ordersProvider } from './provider/order.provider';
 import { OrdersRepository } from './prisma/order.repository';
 import { ProductsModule } from '../products/products.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [PrismaConfigModule, forwardRef(() => ProductsModule)],
+  imports: [
+    PrismaConfigModule,
+    forwardRef(() => ProductsModule),
+    forwardRef(() => UsersModule),
+  ],
   controllers: [OrdersController],
-  providers: [OrdersService, ...ordersProvider, OrdersRepository, PrismaConfigService],
+  providers: [
+    OrdersService,
+    ...ordersProvider,
+    OrdersRepository,
+    PrismaConfigService,
+  ],
   exports: [OrdersService],
 })
 export class OrdersModule {}
