@@ -87,14 +87,14 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(['user'])
+  @Roles(['user', 'admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update order status' })
   @ApiOkResponse({ description: 'Order status updated successfully' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'Order not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  @Patch('/:id/status')
+  @Patch(':id/status')
   updateStatus(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,

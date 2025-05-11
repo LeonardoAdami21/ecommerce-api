@@ -181,6 +181,10 @@ export class OrdersRepository {
   }
 
   async updateStatus(id: number, status: string, userId: number) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const order = await this.orderRepository.findUnique({
       where: { id },
       include: {
