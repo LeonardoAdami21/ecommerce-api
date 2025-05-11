@@ -22,6 +22,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -47,15 +48,20 @@ export class OrdersController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Post()
   create(@Body() createOrderDto: CreateOrderDto, @Req() req: Request) {
+    console.log(createOrderDto.products);
     return this.ordersService.create(createOrderDto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
+  @Roles(['user'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Find all orders' })
   @ApiOkResponse({ description: 'Orders found successfully' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'status', required: false, type: String })
   @Get()
   findAll(
     @Req() req: Request,

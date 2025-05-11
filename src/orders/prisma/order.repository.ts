@@ -31,7 +31,7 @@ export class OrdersRepository {
       throw new NotFoundException('User not found');
     }
     // Verificar produtos e quantidades
-    const productItems = createOrderDto.products;
+    const productItems = createOrderDto.products || [];
 
     // Verificar se todos os produtos existem e têm estoque suficiente
     for (const item of productItems) {
@@ -87,6 +87,7 @@ export class OrdersRepository {
               },
             },
           },
+          
         });
 
         // Atualizar estoque se o pedido for criado com sucesso
@@ -110,20 +111,18 @@ export class OrdersRepository {
         }
 
         return order;
+      }, {
+        timeout: 30000
       });
     } catch (error) {
       throw new InternalServerErrorException(
         'An error occurred while creating the order',
+        error,
       );
     }
   }
 
-  async findAll(
-    userId: number,
-    skip?: number,
-    take?: number,
-    status?: string,
-  ) {
+  async findAll(userId: number, skip?: number, take?: number, status?: string) {
     const where: any = {};
 
     if (status) {

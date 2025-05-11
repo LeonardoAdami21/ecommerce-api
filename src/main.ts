@@ -1,19 +1,22 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { initSwagger } from './app.swagger';
 import { appPort } from './env/envoriment';
-import { JwtService } from '@nestjs/jwt';
-import { RolesGuard } from './auth/guards/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
 
-
   app.disable('x-powered-by');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true, // <-- ESSENCIAL para transformar JSON em classe
+    }),
+  );
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
