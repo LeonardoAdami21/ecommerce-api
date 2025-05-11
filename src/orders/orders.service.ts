@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -18,11 +19,15 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto, userId: number) {
-    const user = await this.usersService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
+    try {
+      const user = await this.usersService.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return this.ordersRepository.create(createOrderDto, userId);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating order', error);
     }
-    return this.ordersRepository.create(createOrderDto, userId);
   }
 
   async findAll(userId: number, skip?: number, take?: number, status?: string) {

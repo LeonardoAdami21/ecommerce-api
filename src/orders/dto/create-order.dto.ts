@@ -24,8 +24,8 @@ class OrderProductDto {
 }
 
 export class CreateOrderDto {
-  @ApiProperty({ type: [OrderProductDto] })
   @IsArray()
+  @ApiProperty({ type: [OrderProductDto] })
   @ValidateNested({ each: true })
   @Type(() => OrderProductDto)
   products: OrderProductDto[];
