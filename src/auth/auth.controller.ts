@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -17,10 +18,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RegisterAuthDto } from './dto/register.auth-dto';
-import { Public } from '../decorators/public.decorator';
 import { LoginAuthDto } from './dto/login.auth-dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { Public } from '../decorators/public.decorator';
 
 @Controller('v2/auth')
 @ApiTags('Authentication and Authorization')
@@ -41,7 +42,7 @@ export class AuthController {
 
   @Public()
   @HttpCode(200)
-  @ApiOperation({ summary: 'Login user' })
+  @ApiOperation({ summary: 'Login user credentials and get token' })
   @ApiOkResponse({ description: 'User login successfully' })
   @ApiBadRequestResponse({ description: 'Invalid credentials' })
   @ApiInternalServerErrorResponse({

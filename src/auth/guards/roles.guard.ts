@@ -62,7 +62,7 @@ export class RolesGuard implements CanActivate {
       }
 
       // Verifica se o usuário tem permissão para acessar a rota
-      return requiredRoles.includes(userRole as string);
+      return requiredRoles.some((role) => userRole.includes(role));
     } catch (error) {
       throw new UnauthorizedException('Token inválido');
     }
