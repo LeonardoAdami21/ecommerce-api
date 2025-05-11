@@ -14,6 +14,10 @@ import { RolesGuard } from './auth/guards/roles.guard';
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     UsersModule,
     AuthModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+    }),
     ProductsModule,
     OrdersModule,
   ],
@@ -23,7 +27,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
       provide: 'APP_GUARD',
       useClass: RolesGuard,
     },
-  ]
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

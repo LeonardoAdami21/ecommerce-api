@@ -34,7 +34,7 @@ export class UserRepository {
           name,
           email,
           password,
-          role: 'user',
+          userRole: ['user'],
         },
       });
       return user;
@@ -46,6 +46,7 @@ export class UserRepository {
       } else {
         throw new InternalServerErrorException(
           'An error occurred while creating the user',
+          error,
         );
       }
     }
@@ -65,7 +66,7 @@ export class UserRepository {
   async findByEmail(email: string) {
     try {
       const user = await this.userRepository.findUnique({
-        where: { email },
+        where: { email: email },
       });
       if (!user) {
         throw new NotFoundException('User not found');
@@ -73,10 +74,11 @@ export class UserRepository {
       return user;
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('User not found', error);
       } else {
         throw new InternalServerErrorException(
           'An error occurred while retrieving the user',
+          error,
         );
       }
     }
@@ -110,8 +112,8 @@ export class UserRepository {
           id: true,
           name: true,
           email: true,
-          role: true,
-        }
+          userRole: true,
+        },
       });
       if (!user) {
         throw new NotFoundException('User not found');

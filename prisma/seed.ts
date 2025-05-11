@@ -14,7 +14,7 @@ async function main() {
       email: 'admin@example.com',
       name: 'Admin',
       password: adminPassword,
-      role: 'admin',
+      userRole: ['admin'],
     },
   });
 
@@ -23,7 +23,8 @@ async function main() {
     {
       name: 'Smartphone XYZ',
       category: 'Eletrônicos',
-      description: 'Um smartphone de última geração com múltiplas câmeras e processamento rápido.',
+      description:
+        'Um smartphone de última geração com múltiplas câmeras e processamento rápido.',
       price: 1999.99,
       quantity_stock: 50,
     },
@@ -37,21 +38,24 @@ async function main() {
     {
       name: 'Fone de Ouvido Wireless',
       category: 'Acessórios',
-      description: 'Fone de ouvido sem fio com cancelamento de ruído e longa duração de bateria.',
+      description:
+        'Fone de ouvido sem fio com cancelamento de ruído e longa duração de bateria.',
       price: 299.99,
       quantity_stock: 100,
     },
     {
       name: 'Smartwatch Sport',
       category: 'Wearables',
-      description: 'Relógio inteligente para monitoramento de atividades físicas e saúde.',
+      description:
+        'Relógio inteligente para monitoramento de atividades físicas e saúde.',
       price: 599.99,
       quantity_stock: 35,
     },
     {
       name: 'Câmera Digital Profissional',
       category: 'Fotografia',
-      description: 'Câmera DSLR com alta resolução e diversos recursos profissionais.',
+      description:
+        'Câmera DSLR com alta resolução e diversos recursos profissionais.',
       price: 4999.99,
       quantity_stock: 15,
     },
