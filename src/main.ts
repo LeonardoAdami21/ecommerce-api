@@ -11,12 +11,6 @@ async function bootstrap() {
   });
 
   app.disable('x-powered-by');
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true, // <-- ESSENCIAL para transformar JSON em classe
-    }),
-  );
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -26,12 +20,11 @@ async function bootstrap() {
   initSwagger(app);
 
   const logger = new Logger('NestApplication');
-  await app.startAllMicroservices();
   app.listen(appPort, '0.0.0.0', async () => {
     logger.log(`Running At: ${await app.getUrl()}`);
     logger.log(`Documentation: ${await app.getUrl()}/v2/docs`);
     logger.log(
-      `Database: ${process.env.MYSQL_USER}@${process.env.MYSQL_PASSWORD}@localhost$:${process.env.MYSQL_PORT}/${process.env.MYSQL_DATABASE}`,
+      `Database: ${process.env.POSTGRES_USER}@${process.env.POSTGRES_PASSWORD}localhost:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DATABASE}`,
     );
   });
 }
