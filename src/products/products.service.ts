@@ -23,7 +23,10 @@ export class ProductsService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    const product = await this.productRepository.create(createProductDto, userId);
+    const product = await this.productRepository.create(
+      createProductDto,
+      userId,
+    );
     return product;
   }
 
@@ -48,7 +51,15 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    return await this.productRepository.findOne(id);
+    try {
+      const product = await this.productRepository.findOne(id);
+      if (!product) {
+        throw new NotFoundException(`Product with ID ${id} not found`);
+      }
+      return product;
+    } catch (error) {
+      throw new NotFoundException('Error retrieving product', error);
+    }
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
