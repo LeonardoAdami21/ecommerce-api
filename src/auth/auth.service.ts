@@ -20,7 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string) {
     const user = await this.usersService.findByEmail(email);
     const isMatch = await argon2.verify(user.password, pass);
     if (user && isMatch) {
@@ -56,19 +56,19 @@ export class AuthService {
 
   async login(dto: LoginAuthDto) {
     try {
-      const user = await this.validateUser(dto.email, dto.password);
+      const { email, password } = dto;
+      const user = await this.validateUser(email, password);
       if (!user) {
         throw new BadRequestException('Invalid credentials');
       }
-      const userRoles = user.role;
-      if (userRoles !== 'user' && userRoles !== 'admin') {
-        throw new ConflictException('Invalid user role');
-      }
+
       const payload: IPayload = {
         email: user.email,
         name: user.name,
         id: user.id,
-        roles: user.role,
+        roles: Array.isArray(user.userRole)
+          ? user.userRole
+          : [user.userRole || 'user'],
       };
       const token = this.jwtService.sign(payload, {
         secret: jwtSecret,
@@ -78,14 +78,12 @@ export class AuthService {
       return {
         message: 'User login successfully',
         access_token: token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
+        roles: Array.isArray(user.userRole)
+          ? user.userRole
+          : [user.userRole || 'user'],
       };
     } catch (error) {
+      console.error(error);
       throw new InternalServerErrorException(
         'An error occurred while login the user',
         error,

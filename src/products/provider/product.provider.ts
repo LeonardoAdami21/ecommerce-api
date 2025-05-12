@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { IProvider } from '../../interface/IProvider';
-import { DATA_SOURCE } from 'src/config/data.source';
+import { DATA_SOURCE } from '../../config/data.source';
 
 export const PRODUCT__REPOSITORY = 'PRODUCT__REPOSITORY';
 
