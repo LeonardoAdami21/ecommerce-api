@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -22,7 +23,8 @@ export class ProductsService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return await this.productRepository.create(createProductDto, userId);
+    const product = await this.productRepository.create(createProductDto, userId);
+    return product;
   }
 
   async findAll(
@@ -54,7 +56,18 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    return await this.productRepository.remove(id);
+    try {
+      const product = await this.productRepository.findOne(id);
+      if (!product) {
+        throw new NotFoundException(`Product with ID ${id} not found`);
+      }
+      await this.productRepository.remove(id);
+      return {
+        message: 'Product deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Error deleting product', error);
+    }
   }
 
   async checkStock(productId: number, quantity: number) {

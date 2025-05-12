@@ -42,7 +42,7 @@ export class CreateProductDto {
     type: Number,
   })
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   price: number;
 
   @ApiProperty({
