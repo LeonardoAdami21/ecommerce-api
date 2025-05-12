@@ -64,6 +64,11 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
+## Comando para criar o container
+```bash
+$ docker compose up
+```
+
 ## Seed para ja ter umm Usuario commo Administrador e Produtos
 ```bash
 $ yarn seed
