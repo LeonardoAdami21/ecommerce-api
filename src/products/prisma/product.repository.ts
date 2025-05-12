@@ -115,7 +115,7 @@ export class ProductRepository {
 
       return product;
     } catch (error) {
-      throw new InternalServerErrorException(
+      throw new NotFoundException(
         'An error occurred while retrieving the product',
       );
     }
