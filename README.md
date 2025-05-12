@@ -44,6 +44,8 @@
 * Filtragem por nome e faixa de preço
 * Ordenação por diferentes critérios
 
+## Antes de tudo verificar a versão do Node.js caso esteja abaxio da 20.0
+-Obs : Atualizar para as versões atuais ou a LTS
 
 ## Project setup
 
