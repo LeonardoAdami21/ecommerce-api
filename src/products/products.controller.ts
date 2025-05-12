@@ -36,7 +36,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
+  @Post('/admin/add-product')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(['admin'])
   @ApiBearerAuth()
@@ -46,7 +46,16 @@ export class ProductsController {
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   create(@Body() createProductDto: CreateProductDto, @Req() req: Request) {
-    return this.productsService.create(createProductDto, req.user.id);
+    const formDataPice = +createProductDto.price;
+    const formDataQuantity = +createProductDto.quantity_stock;
+    return this.productsService.create(
+      {
+        ...createProductDto,
+        price: formDataPice,
+        quantity_stock: formDataQuantity,
+      },
+      req.user.id,
+    );
   }
 
   @Get()
@@ -93,8 +102,8 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @Patch('/admin/edit/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(['admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a product' })
@@ -110,7 +119,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(['admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a product' })
