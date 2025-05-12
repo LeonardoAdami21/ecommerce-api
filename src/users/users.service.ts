@@ -57,9 +57,13 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving the user', error
-      );
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException('User not found');
+      } else {
+        throw new InternalServerErrorException(
+          'An error occurred while retrieving the user',
+        );
+      }
     }
   }
 }
