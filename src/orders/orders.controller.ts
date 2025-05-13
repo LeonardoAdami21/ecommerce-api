@@ -53,7 +53,7 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles(['user'])
+  @Roles(['user', 'admin'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Find all orders' })
   @ApiOkResponse({ description: 'Orders found successfully' })

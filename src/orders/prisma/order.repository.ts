@@ -123,6 +123,10 @@ export class OrdersRepository {
   }
 
   async findAll(userId: number, skip?: number, take?: number, status?: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const where: any = {};
 
     if (status) {
