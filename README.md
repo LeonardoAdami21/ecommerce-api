@@ -26,6 +26,27 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Sistema de gerenciamento de produtos desenvolvido com Nestjs, Swagger, Docker, PrismaOrm e Jest.
+
+🚀 Tecnologias Utilizadas:
+* Nestjs: Biblioteca para construção da API;
+* TypeScript: Superset de JavaScript com tipagem estática;
+* Swagger: Documentação da Api;
+* @Nestjs/Jwt: Autenticação e autorização dos usuários as rotas;
+* Docker: Fermenta utilizada para subir o banco com o Prisma usando Postgres
+* PrismaORM: Database usanda com o Postgres
+* Testing Library Jest: Ferramentas para testes de componentes
+* Arquitetura SOLID: 
+  
+📋 Funcionalidades:
+* Listagem de produtos com informações completas
+* Cadastro de Usuario e Login com suas credenciais de email e senha;
+* Filtragem por nome e faixa de preço
+* Ordenação por diferentes critérios
+
+## Antes de tudo verificar a versão do Node.js caso esteja abaxio da 20.0
+-Obs : Atualizar para as versões atuais ou a LTS
+
 ## Project setup
 
 ```bash
@@ -43,6 +64,16 @@ $ yarn run start:dev
 
 # production mode
 $ yarn run start:prod
+```
+
+## Comando para criar o container
+```bash
+$ docker compose up
+```
+
+## Seed para ja ter umm Usuario commo Administrador e Produtos
+```bash
+$ yarn seed
 ```
 
 ## Run tests
